@@ -2,7 +2,7 @@
 export default function SubscribeButton() {
   const checkoutUrl =
     import.meta.env.VITE_STRIPE_CHECKOUT_URL ||
-    "https://buy.stripe.com/your_fallback_checkout_link"; // TODO: replace or set env var on Vercel
+    "https://buy.stripe.com/00wbJ170NdYhdKPaOs9oc06"; // TODO: replace or set env var on Vercel
 
   const handleSubscribe = () => {
     window.location.href = checkoutUrl;
