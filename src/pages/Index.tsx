@@ -1,9 +1,9 @@
 import {
-  Fragment,
   useMemo,
   useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import {
@@ -30,6 +30,7 @@ import {
   UserRoundCheck,
   Shield,
   HeartPulse,
+  type LucideIcon,
 } from "lucide-react";
 
 export const STRIPE_LINK = "https://buy.stripe.com/00wbJ170NdYhdKPaOs9oc06";
@@ -45,7 +46,7 @@ export const openStripe = () => {
 type SubscribeButtonProps = {
   className?: string;
   children?: ReactNode;
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 function SubscribeButton({
   className = "",
@@ -54,9 +55,23 @@ function SubscribeButton({
       <CreditCard className="h-4 w-4" /> Subscribe Monthly
     </>
   ),
+  onClick,
+  type = "button",
+  ...rest
 }: SubscribeButtonProps) {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
+    openStripe();
+  };
+
   return (
-    <button onClick={openStripe} className={className}>
+    <button
+      type={type}
+      onClick={handleClick}
+      className={className}
+      {...rest}
+    >
       {children}
     </button>
   );
@@ -386,7 +401,7 @@ function Sidebar({
 }
 
 type StatCardProps = {
-  icon: typeof Users;
+  icon: LucideIcon;
   label: string;
   value: string;
   trend?: string;
@@ -479,8 +494,7 @@ function ScheduleView({
   classes: ClassSchedule[];
   addClass: (c: ClassSchedule) => void;
 }) {
-  const [form, setForm] = useState<ClassSchedule>({
-    id: "",
+  const [form, setForm] = useState<Omit<ClassSchedule, "id">>({
     title: "",
     coach: "",
     room: "Dojo A",
@@ -502,7 +516,7 @@ function ScheduleView({
       Math.random().toString(36).slice(2);
 
     addClass({ ...form, id });
-    setForm({ id: "", title: "", coach: "", room: "Dojo A", start: "17:00", end: "18:00", days: [] });
+    setForm({ title: "", coach: "", room: "Dojo A", start: "17:00", end: "18:00", days: [] });
   };
 
   const fieldConfig: {
@@ -555,7 +569,7 @@ function ScheduleView({
               <label className="text-xs text-gray-600">{label}</label>
               <input
                 type={type}
-                value={form[key] as string}
+                value={form[key]}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, [key]: e.target.value }))
                 }
@@ -641,7 +655,9 @@ function IssuesView({
   const [severity, setSeverity] = useState<IssueSeverity>("medium");
 
   const submit = () => {
-    if (!title) {
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) {
       alert("Please add a title");
       return;
     }
@@ -650,7 +666,7 @@ function IssuesView({
       (globalThis.crypto as Crypto | undefined)?.randomUUID?.() ??
       Math.random().toString(36).slice(2);
 
-    addIssue({ id, title, severity, status: "Open" });
+    addIssue({ id, title: trimmedTitle, severity, status: "Open" });
     setTitle("");
     setSeverity("medium");
   };
