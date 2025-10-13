@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useState,
   type ButtonHTMLAttributes,
@@ -36,6 +37,7 @@ import {
 export const STRIPE_LINK = "https://buy.stripe.com/00wbJ170NdYhdKPaOs9oc06";
 export const WEBSITE_URL = "https://www.karatedesignscn.com";
 export const INSTAGRAM_URL = "https://www.instagram.com/karate_designs.cn";
+export const PRODUCT_NAME = "DojoApp";
 
 export const openStripe = () => {
   if (typeof window !== "undefined") {
@@ -322,7 +324,7 @@ function Header({ onSubscribe }: { onSubscribe: () => void }) {
             <Dumbbell className="h-5 w-5 text-white" />
           </div>
           <div>
-            <div className="font-semibold leading-tight text-gray-900">Dojo Admin</div>
+            <div className="font-semibold leading-tight text-gray-900">{PRODUCT_NAME}</div>
             <div className="-mt-0.5 text-xs text-gray-500">Manage classes • Members • Growth</div>
           </div>
         </div>
@@ -1283,6 +1285,12 @@ export default function Index() {
     openProfileId,
     profiles,
   ]);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.title = `${PRODUCT_NAME} Admin Dashboard`;
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
